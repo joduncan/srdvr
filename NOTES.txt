@@ -1,0 +1,3 @@
+Misc. thoughts and notes I want to capture during srdvr development:
+--------------------------------------------------------------------
+

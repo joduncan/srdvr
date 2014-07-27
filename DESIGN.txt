@@ -1,0 +1,44 @@
+You might notice that certain core behaviors of these classes are not tested. I feel those are architectural/design
+concerns, and probably are best discussed outside of the test framework. I'll try to cover what I feel are
+the most relevant topics here.
+
+
+Recorder class:
+===============
+The recording code can be quite simple if you separate the playback of recordings from the storage details
+of the recordings. Also, if you trust that the recorder class is internally robust enough to avoid storage conflicts,
+you can then simply tell the recorder object(s) when to start or stop a recording. I have made these assumptions
+based on the fact that playback has had very little discussion in the problem description. Without more information
+any decisions made in relation to playback will be even wilder speculation than I have taken liberties with for parts
+of the problem that ARE already mentioned.
+
+So, for better or worse, I am pushing off some playback concerns with the current implementation until later.
+When we have to implement playback, we'll will need some amount of cleverness about accessing certain recordings.
+We may also need to share some logic(such as a file naming convention) between the recorder and playback classes.
+This seems like an acceptable design decision to me, since this is minimal overlap/duplication, can likely be
+solved cleanly through an additional abstraction (such as a storage mechanism class that encapsulates the storage
+conventions and can be used by both recorder/playback classes), and separates our concerns enough to get the
+currently requested work product into the customer's hands.
+
+
+Scheduler class:
+================
+I've tried to isolate the conflict resolution from the scheduler implementation. Time will tell how well I have
+succeeded (or not).
+
+I've also made the decision to not start the actual scheduling work when a new object is instantiated. This
+allows us to use this class in the UI to more easily present to the user which show will be recorded if the
+user inputs conflicting recording information. I also feel like it gives us enough control over the class
+that we could do fun flexible, scalable architectures in the future.(multiple schedulers running the same
+or different conflict algorithms, distributed schedulers, etc)
+
+
+scheduling config file format:
+==============================
+I've picked csv because we have a pretty minimal amount of information(channel, start time, end time) to capture
+for each, shall we say, "channel recording configuration entry". something more verbose, such as XML or even
+JSON, will only complicate the code, and make 3rd-party interfaces that much harder to implement.
+
+Obviously if this was scaled up significantly, one might eventually consider a database to hold the config info.
+but right now that's REALLY overkill, so I'm keeping it simple for now to ease implementation, testing, and
+developer brainpower.
