@@ -39,5 +39,10 @@ describe 'Earliest recording continues algorithm' do
     expect([rec2,rec3,rec1].sort( &algo.method(:compare) )).to match_array([rec1,rec2,rec3])
 
     expect([rec2,rec1,rec3,rec4].sort( &algo.method(:compare) )).to match_array([rec4,rec1,rec2,rec3])
+
+    # input validation test cases
+    expect{[1,2,"four"].sort( &algo.method(:compare) )}.to raise_error(ArgumentError)
+
+    expect{ [ {:a=>"whatever"}, {} ].sort( &algo.method(:compare) )}.to raise_error(ArgumentError)
   end
 end
