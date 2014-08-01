@@ -1,6 +1,24 @@
 You might notice that certain core behaviors of these classes are not tested. I feel those are architectural/design
 concerns, and probably are best discussed outside of the test framework. I'll try to cover what I feel are
-the most relevant topics here.
+the most relevant topics here. Also, if a topic you think is important or relevant is not covered here, it does
+not necessarily mean that I did not consider it. It most likely means that I have gotten tired of typing, and would
+prefer to talk about the numerous requirements, feature improvements, etc. verbally and/or in person, instead of writing
+more than I have already verbosely done.
+
+
+UI:
+===
+While I usually have strong opinions about UI, I also have never focused heavily on implementing my thoughts about
+UI in any program I've developed. There are often product owners and other stakeholders who have strong opinions,
+so I often find myself trying to reconcile others' thoughts, or gently suggest improvements as I see them. That's
+partly why this doesn't actually have a user interface, that would be one of the major areas we'd need to implement
+to consider this project "production-ready". I have tried to make many of my decisions in the areas that I have
+implemented based upon providing flexible capabilities in the tool, and simplicity in taking advantage of those
+capabilities. It should be trivial to write a ruby, python, shell script, or otherwise full-blown Java or HTML5
+graphical interface to display and populate both the contents of the config file, and the results of the conflict
+chosen resolution algorithm at any point in time. It should also be trivial to run the scheduler in multiple
+configurations, both regarding what shows to record, but also regarding how many recordings can be captured at
+one time.
 
 
 Recorder class:
@@ -33,11 +51,33 @@ that we could do fun flexible, scalable architectures in the future.(multiple sc
 or different conflict algorithms, distributed schedulers, etc)
 
 
+Recording class:
+================
+The is_active function is placed here because I needed a common, reasonable place to put this utility-oriented
+function. I didn't want to make a full-blown class for each recording, it's fairly simple, so this just holds this
+one recording-specific API for right now. I'm also typically against "static" methods(not that ruby really has much
+of a hard "convention" in that regard) but this is minor, and not abused(like most singletons typically are),
+so I suppose it's ok.
+
+
+conflict resolution classes:
+============================
+I tried to pull all recording organization into this conflict resolution component. This should make creating and
+using new algorithms fairly easy to do, and by sending in all recordings every time a decision needs to be made,
+more advanced algorithms (such as making decisions about hd/sd recording) could be implemented in the future by
+extending the data captured for each recording, and enhancing the sorting and conflict resolution algorithm. That
+should only require minor changes to the scheduler class, which would hopefully be a nicely decoupled separation of
+responsibilities that allows us to develop or change algorithms more rapidly in the future.
+
+
 scheduling config file format:
 ==============================
 I've picked csv because we have a pretty minimal amount of information(channel, start time, end time) to capture
 for each, shall we say, "channel recording configuration entry". something more verbose, such as XML or even
-JSON, will only complicate the code, and make 3rd-party interfaces that much harder to implement.
+JSON, will only complicate the code, and make 3rd-party interfaces, such as shell scripts or tools developed in
+other languages, that much harder to implement. By using a csv file for each scheduler, it also becomes somewhat
+easy to classify or separate recordings between multiple schedulers, for example if we wanted to build a recording
+farm where multiple machines could record a certain number of streams per node.
 
 Obviously if this was scaled up significantly, one might eventually consider a database to hold the config info.
 but right now that's REALLY overkill, so I'm keeping it simple for now to ease implementation, testing, and
