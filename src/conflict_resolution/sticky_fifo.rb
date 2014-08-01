@@ -18,15 +18,16 @@ require_relative './naive_fifo'
 class StickyFifo < NaiveFifo
 
   def datetime_min(rec_a, rec_b)
-    [rec_b[:start_time], rec_b[:start_date]] if (rec_b[:start_date] < rec_a[:start_date])
-    [rec_b[:start_time], rec_b[:start_date]] if (rec_b[:start_time] < rec_a[:start_time])
-    [rec_a[:start_time], rec_a[:start_date]]
+    return [rec_b[:start_time], rec_b[:start_date]] if (rec_b[:start_date] < rec_a[:start_date])
+    return [rec_b[:start_time], rec_b[:start_date]] if (rec_b[:start_time] < rec_a[:start_time])
+    return [rec_a[:start_time], rec_a[:start_date]]
   end
 
   def stickify_recordings(recording_group)
     recording_group[:recordings].map do |rec|
       new_rec = Hash.new
       recording_group[:recordings].each do |other_rec|
+        next if other_rec == rec
         new_rec[:end_time], new_rec[:end_date] = rec[:end_time],rec[:end_date]
         new_rec[:start_time], new_rec[:start_date] = datetime_min(rec, other_rec)
         # we could also extend the end time, but that's not really necessary in this algorithm, since
