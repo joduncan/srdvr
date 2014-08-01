@@ -15,7 +15,7 @@ describe 'Sticky Fifo comparator' do
         :start_date =>"20140615",
         :end_date =>"20140615",
         :start_time => "630",
-        :end_time => "700"
+        :end_time => "730"
     }
     rec3 = {
         :start_date =>"20140615",
